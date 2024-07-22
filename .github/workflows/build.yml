@@ -23,6 +23,10 @@ jobs:
       with:
         repository: mylove90/sm-a245f_14_opensource
 
+    - name: Sync kernel source
+      run: |
+        git clone --depth=1 -b a245f https://github.com/mylove90/Samsung_Mt6789_Kernel kernel-5.10/
+
     - name: Sync toolchains from GitLab
       run: |
         git clone --depth=1 -b A155F/N https://gitlab.com/mylove90/toolchain.git toolchain
@@ -32,7 +36,7 @@ jobs:
     - name: Sync Anykernel3
       run: |
         git clone --depth=1 --branch A15 https://github.com/mylove90/AnyKernel3 AnyKernel3
-        
+
     - name: Set up build environment
       run: |
         sudo apt update
@@ -48,12 +52,12 @@ jobs:
     - name: Pack AnyKernel3 ZIP
       run: |
         cp -f out/target/product/a24/obj/KERNEL_OBJ/kernel-5.10/arch/arm64/boot/Image.gz ./AnyKernel3/
-        cp -f out/target/product/a24/obj/KERNEL_OBJ/*.ko ./AnyKernel3/modules/system/lib/modules/
         cd AnyKernel3/
-        zip -r9 a245f-kernel.zip * -x README.md a245f-kernel.zip .git/\* .github/\*
+        rm -rf .git .github README.md
+        zip -r9 a245f-kernel.zip *
 
     - name: Upload AnyKernel3 ZIP
       uses: actions/upload-artifact@v4.3.4
       with:
         name: a245f-kernel.zip
-        file: AnyKernel3/a245f-kernel.zip
+        path: AnyKernel3/a245f-kernel.zip
